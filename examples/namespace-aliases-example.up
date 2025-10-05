@@ -1,0 +1,195 @@
+# Example: Namespace Aliases
+# Demonstrates using multiple versions or implementations of the same namespace
+
+# Use multiple versions of the time namespace
+!use [
+  time,                      # Latest version as 'time'
+  time@1.0.0 as oldtime,    # Old version for legacy format
+  time@2.0.0 as newtime     # New version with enhanced features
+]
+
+# Server configuration showing time migration
+server {
+  name production-api
+
+  # Current time format (latest)
+  started_at $time.now
+
+  # Legacy time format for backwards compatibility
+  legacy_timestamp $oldtime.format(format="2006-01-02 15:04:05")
+
+  # New enhanced time format
+  enhanced_timestamp $newtime.format(format="RFC3339Nano")
+
+  # Show all three for comparison
+  comparison {
+    current $time.now
+    old $oldtime.now
+    new $newtime.now
+  }
+}
+
+# ============================================================================
+
+# Use different implementations of a namespace
+!use [
+  github.com/uplang/ns-random as random,
+  github.com/myorg/secure-random as securerandom
+]
+
+# Security tokens using different random implementations
+tokens {
+  # Standard random for non-sensitive data
+  session_id $random.uuid
+  request_id $random.nanoid(size=16)
+
+  # Secure random for cryptographic operations
+  api_key $securerandom.bytes(size=32)
+  crypto_salt $securerandom.hex(size=16)
+}
+
+# ============================================================================
+
+# Avoid naming conflicts with custom implementations
+!use [
+  id,                                    # Standard ID namespace
+  github.com/mycompany/custom-id as cid  # Custom ID implementation
+]
+
+user {
+  # Standard UUID
+  uuid $id.uuid
+
+  # Custom company-specific ID format
+  employee_id $cid.generate(dept="engineering", year=2025)
+  badge_id $cid.format(type="badge", sequence=12345)
+}
+
+# ============================================================================
+
+# Multiple database connection managers
+!use [
+  env,
+  env@1.0.0 as legacyenv  # Old version that reads from .env file
+]
+
+database {
+  # New environment handling (system env vars)
+  primary {
+    host $env.get(key="DB_HOST", default="localhost")
+    port!int $env.get(key="DB_PORT", default="5432")
+  }
+
+  # Legacy environment handling (reads from file)
+  legacy {
+    host $legacyenv.get(key="LEGACY_DB_HOST", default="oldserver")
+    port!int $legacyenv.get(key="LEGACY_DB_PORT", default="3306")
+  }
+}
+
+# ============================================================================
+
+# Testing with multiple faker implementations
+!use [
+  faker,                           # Standard faker
+  faker@3.0.0 as faker3,          # Specific version
+  github.com/myorg/domain-faker as domfaker  # Domain-specific faker
+]
+
+test_data {
+  # Standard test user
+  generic_user {
+    name $faker.name
+    email $faker.email
+    phone $faker.phone
+  }
+
+  # User with older faker format
+  legacy_user {
+    name $faker3.name
+    email $faker3.email
+    phone $faker3.phone
+  }
+
+  # Domain-specific test data
+  company_user {
+    name $domfaker.employee_name
+    email $domfaker.corporate_email
+    department $domfaker.department
+    role $domfaker.job_title
+  }
+}
+
+# ============================================================================
+
+# Version compatibility testing
+!use [
+  math,
+  math@1.0.0 as mathv1,
+  math@2.0.0 as mathv2
+]
+
+calculations {
+  # Test same calculation across versions
+  test_case "precision_comparison" {
+    input!float 10.5
+
+    result_current $math.round(x=10.5)
+    result_v1 $mathv1.round(x=10.5)
+    result_v2 $mathv2.round(x=10.5)
+
+    # Verify backward compatibility
+    compatible!bool true
+  }
+}
+
+# ============================================================================
+
+# Load balancing with different time sources
+!use [
+  time as systemtime,
+  github.com/ntp/time as ntptime,
+  github.com/gps/time as gpstime
+]
+
+time_sources {
+  # System time
+  system {
+    source system
+    timestamp $systemtime.now
+    unix!int $systemtime.unix
+  }
+
+  # NTP time for network sync
+  ntp {
+    source ntp
+    timestamp $ntptime.now
+    drift $ntptime.drift
+  }
+
+  # GPS time for precision applications
+  gps {
+    source gps
+    timestamp $gpstime.now
+    accuracy $gpstime.accuracy
+  }
+}
+
+# ============================================================================
+
+# Notes:
+#
+# Alias Benefits:
+# 1. Use multiple versions simultaneously for migration
+# 2. Compare different implementations side-by-side
+# 3. Avoid naming conflicts with custom namespaces
+# 4. Test compatibility across versions
+# 5. Gradual migration from old to new implementations
+#
+# Alias Syntax Rules:
+# - Format: namespace[@version] as alias
+# - Alias names must be valid identifiers
+# - Aliases are local to the file
+# - No nested aliases (alias cannot reference another alias)
+# - Aliases must be unique within a file
+

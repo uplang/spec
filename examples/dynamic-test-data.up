@@ -1,0 +1,308 @@
+# Dynamic Test Data Example
+# Demonstrates UP's dynamic namespace capabilities for generating test data
+
+!use [time, id, faker, random]
+
+# Test run metadata
+test_run {
+  id $id.uuid
+  name Load Test - User Registration
+  started_at $time.now
+  seed!int 12345
+}
+
+# Test environment configuration
+environment {
+  name staging
+  region us-west-2
+
+  database {
+    host $faker.ipv4
+    port!int $random.int(5432, 5532)
+    name test_db_$random.hex(8)
+    username test_user
+    password $random.base64(32)
+    pool_size!int $random.int(10, 50)
+  }
+
+  api {
+    base_url https://$faker.domain
+    api_key api_key_$random.string(40)
+    timeout!dur 30s
+    retry_count!int $random.int(3, 5)
+  }
+
+  cache {
+    host $faker.ipv4
+    port!int 6379
+    ttl!dur $random.int(300, 3600)s
+  }
+}
+
+# Generate realistic test users
+test_users [
+  {
+    id $id.uuid
+    username $faker.username
+    email $faker.email
+    full_name $faker.name
+    phone $faker.phone
+    created_at $time.add(-90d)
+    last_login $time.add(-2h)
+    verified!bool true
+
+    profile {
+      bio $faker.paragraph
+      avatar_url https://$faker.domain/avatars/$random.hex(16).jpg
+      location $faker.city, $faker.state
+      website https://$faker.domain
+    }
+
+    preferences {
+      theme $random.choice([light, dark, auto])
+      language $random.choice([en, es, fr, de, ja])
+      notifications!bool $random.bool
+      timezone America/Los_Angeles
+    }
+  }
+  {
+    id $id.uuid
+    username $faker.username
+    email $faker.email
+    full_name $faker.name
+    phone $faker.phone
+    created_at $time.add(-60d)
+    last_login $time.add(-24h)
+    verified!bool true
+
+    profile {
+      bio $faker.sentence
+      avatar_url https://$faker.domain/avatars/$random.hex(16).jpg
+      location $faker.city, $faker.state
+      website https://$faker.domain
+    }
+
+    preferences {
+      theme $random.choice([light, dark, auto])
+      language $random.choice([en, es, fr, de, ja])
+      notifications!bool $random.bool
+      timezone America/New_York
+    }
+  }
+  {
+    id $id.uuid
+    username $faker.username
+    email $faker.email
+    full_name $faker.name
+    phone $faker.phone
+    created_at $time.add(-30d)
+    last_login $time.add(-1h)
+    verified!bool false
+
+    profile {
+      bio $faker.text(100)
+      avatar_url https://$faker.domain/avatars/$random.hex(16).jpg
+      location $faker.city, $faker.state
+    }
+
+    preferences {
+      theme $random.choice([light, dark, auto])
+      language $random.choice([en, es, fr, de, ja])
+      notifications!bool $random.bool
+      timezone Europe/London
+    }
+  }
+]
+
+# Mock product catalog
+products!list {
+  product_$random.hex(6) {
+    id $id.uuid
+    name $faker.buzzword Product
+    description $faker.paragraph
+    sku PROD-$random.string(10)
+    price!float $random.float(9.99, 999.99)
+    currency USD
+    category $random.choice([electronics, clothing, home, sports, books])
+    in_stock!bool $random.bool
+    quantity!int $random.int(0, 500)
+
+    metadata {
+      created_at $time.add(-180d)
+      updated_at $time.add(-7d)
+      created_by admin_$random.int(1, 10)
+      tags [
+        $random.choice([new, sale, featured, trending])
+        $random.choice([popular, limited, exclusive])
+      ]
+    }
+  }
+
+  product_$random.hex(6) {
+    id $id.uuid
+    name $faker.buzzword Device
+    description $faker.sentence
+    sku PROD-$random.string(10)
+    price!float $random.float(99.99, 2999.99)
+    currency USD
+    category electronics
+    in_stock!bool true
+    quantity!int $random.int(50, 200)
+
+    specs {
+      weight $random.float(0.5, 5.0) kg
+      dimensions $random.int(10, 50)x$random.int(10, 50)x$random.int(5, 20) cm
+      color $random.choice([black, white, silver, blue, red])
+      warranty $random.int(1, 3) years
+    }
+
+    metadata {
+      created_at $time.add(-90d)
+      updated_at $time.add(-3d)
+      created_by admin_$random.int(1, 10)
+      rating!float $random.float(3.5, 5.0)
+      reviews!int $random.int(10, 500)
+    }
+  }
+}
+
+# Mock companies for B2B testing
+companies [
+  {
+    id $id.uuid
+    name $faker.company
+    domain $faker.domain
+    industry $random.choice([technology, finance, healthcare, retail, manufacturing])
+
+    contact {
+      email contact@$faker.domain
+      phone $faker.phone
+      website https://$faker.domain
+    }
+
+    address {
+      street $faker.street
+      city $faker.city
+      state $faker.state
+      zipcode $faker.zipcode
+      country USA
+    }
+
+    details {
+      employees!int $random.int(10, 10000)
+      founded_year!int $random.int(1990, 2023)
+      revenue!float $random.float(100000, 100000000)
+      public!bool $random.bool
+    }
+
+    account {
+      tier $random.choice([starter, professional, enterprise])
+      contract_start $time.add(-365d)
+      contract_end $time.add(365d)
+      active!bool true
+    }
+  }
+]
+
+# Load test scenarios
+load_scenarios [
+  {
+    name User Registration Flow
+    duration!dur 5m
+    ramp_up!dur 30s
+    virtual_users!int $random.int(100, 500)
+
+    requests [
+      {
+        name GET Homepage
+        method GET
+        path /
+        weight!int 100
+        expected_status!int 200
+        timeout!dur 5s
+      }
+      {
+        name POST Register
+        method POST
+        path /api/register
+        weight!int 50
+        expected_status!int 201
+        timeout!dur 10s
+        body {
+          username $faker.username
+          email $faker.email
+          password $random.base64(16)
+        }
+      }
+      {
+        name POST Login
+        method POST
+        path /api/login
+        weight!int 80
+        expected_status!int 200
+        timeout!dur 5s
+      }
+      {
+        name GET Profile
+        method GET
+        path /api/profile
+        weight!int 60
+        expected_status!int 200
+        timeout!dur 3s
+      }
+    ]
+  }
+]
+
+# Mock API responses for testing
+mock_responses {
+  success_login {
+    status!int 200
+    timestamp $time.now
+
+    body {
+      user_id $id.uuid
+      username $faker.username
+      email $faker.email
+      token jwt_$random.base64(128)
+      expires_at $time.add(24h)
+    }
+  }
+
+  error_unauthorized {
+    status!int 401
+    timestamp $time.now
+
+    body {
+      error Unauthorized
+      message Invalid credentials
+      request_id $id.short
+    }
+  }
+
+  success_order {
+    status!int 201
+    timestamp $time.now
+
+    body {
+      order_id $id.uuid
+      user_id $id.uuid
+      total!float $random.float(10.0, 500.0)
+      currency USD
+      status processing
+      created_at $time.now
+      estimated_delivery $time.add(168h)
+    }
+  }
+}
+
+# Test assertions
+expected_metrics {
+  response_time_p95!dur $random.int(100, 500)ms
+  response_time_p99!dur $random.int(200, 1000)ms
+  success_rate!float 99.5
+  error_rate!float 0.5
+  requests_per_second!int $random.int(100, 1000)
+  concurrent_users!int $random.int(50, 500)
+}
+

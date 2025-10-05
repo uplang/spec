@@ -1,0 +1,89 @@
+# Multiline content
+# This example demonstrates multiline strings with language hints
+
+# Basic multiline string
+description ```
+This is a multiline description.
+It can span multiple lines.
+Whitespace is preserved.
+```
+
+# Multiline with language hint
+script!bash ```bash
+#!/bin/bash
+echo "Hello, World!"
+for i in {1..5}; do
+  echo "Count: $i"
+done
+```
+
+# JSON configuration
+config ```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.0",
+    "mongoose": "^6.0.0"
+  }
+}
+```
+
+# Python code
+example_code!python ```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Calculate first 10 Fibonacci numbers
+for i in range(10):
+    print(f"fib({i}) = {fibonacci(i)}")
+```
+
+# SQL query
+query!sql ```sql
+SELECT u.name, COUNT(o.id) as order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.active = true
+GROUP BY u.name
+ORDER BY order_count DESC
+LIMIT 10;
+```
+
+# Markdown documentation
+readme!markdown ```markdown
+# My Project
+
+## Features
+
+- Fast and efficient
+- Easy to use
+- Well documented
+
+## Installation
+
+```bash
+npm install my-project
+```
+
+## License
+
+MIT
+```
+
+# YAML example
+kubernetes_config!yaml ```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+```
+

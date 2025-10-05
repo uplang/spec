@@ -1,0 +1,105 @@
+# UP PEG Grammar
+# Parsing Expression Grammar for UP
+# Compatible with PEG.js, Peggy, and other PEG parsers
+
+# Document Structure
+Document = Statement* EOF
+
+Statement =
+    KeyWithType Value? NEWLINE
+    / Comment
+    / NEWLINE
+
+Comment = HASH RestOfLine NEWLINE
+
+# Keys and Type Annotations
+KeyWithType = IDENTIFIER TypeAnnotation?
+
+TypeAnnotation =
+    BANG IDENTIFIER
+    / BANG INTEGER
+
+# Values
+Value =
+    Multiline
+    / Block
+    / List
+    / Table
+    / Scalar
+
+Scalar = STRING
+
+# Multiline Blocks
+Multiline = BACKTICKS LanguageHint? NEWLINE MultilineContent BACKTICKS NEWLINE?
+
+LanguageHint = IDENTIFIER
+
+MultilineContent = (!BACKTICKS .)*
+
+# Blocks
+Block = LBRACE NEWLINE BlockContent RBRACE
+
+BlockContent = Statement*
+
+# Lists
+List =
+    LBRACKET NEWLINE ListContent RBRACKET
+    / LBRACKET InlineList RBRACKET
+
+ListContent = ListItem*
+
+ListItem =
+    Block NEWLINE
+    / LBRACKET InlineList RBRACKET NEWLINE
+    / Scalar NEWLINE
+
+InlineList = (InlineItem (COMMA InlineItem)*)?
+
+InlineItem = Scalar
+
+# Tables
+Table = LBRACE NEWLINE TableColumns TableRows RBRACE
+
+TableColumns = IDENTIFIER LBRACKET InlineList RBRACKET NEWLINE
+
+TableRows = IDENTIFIER LBRACE NEWLINE RowList RBRACE
+
+RowList = (LBRACKET InlineList RBRACKET NEWLINE)*
+
+# Lexical Rules
+IDENTIFIER = [A-Za-z_][A-Za-z0-9_-]*
+
+INTEGER = [0-9]+
+
+STRING = [^\r\n{}\[\]`!,:#]+
+
+BANG = "!"
+
+LBRACE = "{"
+
+RBRACE = "}"
+
+LBRACKET = "["
+
+RBRACKET = "]"
+
+COMMA = ","
+
+COLON = ":"
+
+BACKTICKS = "```"
+
+HASH = "#"
+
+NEWLINE = "\r"? "\n"
+
+WHITESPACE = [ \t]+
+
+RestOfLine = [^\r\n]*
+
+EOF = !.
+
+# Whitespace handling (ignored)
+_ = WHITESPACE*
+__ = WHITESPACE+
+

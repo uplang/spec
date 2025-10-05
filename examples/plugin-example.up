@@ -1,0 +1,59 @@
+# Example: Using Namespace Plugins
+# Demonstrates UP's pluggable namespace system
+
+!use [greeting]
+
+# Simple greeting
+welcome_message $greeting.hello(Alice)
+
+# Goodbye message
+farewell_message $greeting.goodbye(Bob)
+
+# Wave greeting with emoji
+wave_message $greeting.wave(Charlie)
+
+# Using default parameter (name defaults to "World")
+default_greeting $greeting.hello
+
+# Combining with static variables
+vars {
+  visitor Alice
+  host_name Example Server
+}
+
+# Dynamic greetings using variables
+personalized {
+  greeting $greeting.hello($vars.visitor)
+  server_name $vars.host_name
+  farewell $greeting.goodbye($vars.visitor)
+}
+
+# Use in a list
+messages [
+  $greeting.hello(Alice)
+  $greeting.hello(Bob)
+  $greeting.hello(Charlie)
+  $greeting.goodbye(Alice)
+  $greeting.goodbye(Bob)
+  $greeting.goodbye(Charlie)
+]
+
+# Use in structured data
+users!list {
+  user_001 {
+    name Alice
+    welcome_msg $greeting.hello(Alice)
+    goodbye_msg $greeting.goodbye(Alice)
+  }
+
+  user_002 {
+    name Bob
+    welcome_msg $greeting.hello(Bob)
+    goodbye_msg $greeting.goodbye(Bob)
+  }
+}
+
+# Note: This example requires the greeting plugin to be implemented
+# Currently this is a design demonstration
+# See up-namespaces/greeting for the plugin implementation
+

@@ -1,0 +1,114 @@
+# UP Schema Definition
+# Defines validation rules for server configuration
+
+schema server
+
+version 1.0.0
+description "Server configuration schema"
+
+fields {
+  host!string {
+    required!bool true
+    description "Server hostname or IP address"
+    pattern ^[a-zA-Z0-9.-]+$
+    examples [localhost, example.com, 127.0.0.1, server.internal]
+  }
+
+  port!int {
+    required!bool true
+    description "Server port number"
+    min 1
+    max 65535
+    examples [8080, 443, 3000, 8443]
+  }
+
+  timeout!dur {
+    required!bool false
+    description "Connection timeout"
+    default 30s
+    min 1s
+    max 5m
+    examples [30s, 1m, 2m30s]
+  }
+
+  tls_enabled!bool {
+    required!bool false
+    description "Enable TLS/SSL"
+    default false
+  }
+
+  tls_cert_path!string {
+    required!bool false
+    description "Path to TLS certificate"
+    pattern ^/.*\.crt$
+  }
+
+  tls_key_path!string {
+    required!bool false
+    description "Path to TLS private key"
+    pattern ^/.*\.key$
+  }
+
+  replicas!int {
+    required!bool false
+    description "Number of server replicas"
+    min 1
+    max 100
+    default 1
+  }
+}
+
+validation {
+  # Custom validation rules
+  rules [
+    {
+      name "tls_requires_cert_and_key"
+      condition "tls_enabled == true"
+      requires "tls_cert_path != null && tls_key_path != null"
+      error "TLS enabled requires both certificate and key paths"
+    }
+    {
+      name "port_443_should_use_tls"
+      condition "port == 443"
+      requires "tls_enabled == true"
+      warning "Port 443 should have TLS enabled"
+    }
+  ]
+
+  # Conditional requirements
+  conditional [
+    {
+      if "tls_enabled == true"
+      then_required [tls_cert_path, tls_key_path]
+    }
+  ]
+}
+
+metadata {
+  author "UP Team"
+  url https://schemas.uplang.org/server/1.0.0
+  license MIT
+
+  tags [server, networking, configuration]
+
+  examples [
+    {
+      name "Basic HTTP server"
+      value {
+        host localhost
+        port!int 8080
+      }
+    }
+    {
+      name "HTTPS server"
+      value {
+        host example.com
+        port!int 443
+        tls_enabled!bool true
+        tls_cert_path /etc/ssl/certs/server.crt
+        tls_key_path /etc/ssl/private/server.key
+      }
+    }
+  ]
+}
+

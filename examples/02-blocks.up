@@ -1,0 +1,51 @@
+# Block structures
+# This example demonstrates nested key-value blocks
+
+# Simple block
+server {
+host localhost
+port!int 8080
+}
+
+# Nested blocks
+database {
+primary {
+host db1.example.com
+port!int 5432
+user postgres
+}
+replica {
+host db2.example.com
+port!int 5432
+user readonly
+}
+}
+
+# Block with various types
+config {
+  app_name MyApp
+  version 1.0.0
+  debug!bool false
+max_connections!int 100
+timeout!dur 30s
+}
+
+# Deeply nested blocks
+organization {
+name TechCorp
+departments {
+engineering {
+name Engineering
+head Alice Smith
+}
+sales {
+name Sales
+head Bob Johnson
+}
+marketing {
+name Marketing
+head Carol Williams
+}
+}
+}
+

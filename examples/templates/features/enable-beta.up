@@ -1,0 +1,7 @@
+# Enable beta features
+
+tweaks!patch {
+  features.beta_api!bool true
+  features.advanced_search!bool true
+  features.new_dashboard!bool true
+}

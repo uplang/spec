@@ -1,0 +1,35 @@
+# Development environment configuration
+
+config!base base.up
+
+environment!overlay development
+
+server!overlay {
+  host localhost
+  debug!bool true
+  hot_reload!bool true
+}
+
+database!overlay {
+  host localhost
+  port!int 5432
+  database myapp_dev
+  username dev_user
+}
+
+cache!overlay {
+  enabled!bool true
+  host localhost
+  port!int 6379
+}
+
+features!overlay {
+  new_ui!bool true
+  advanced_search!bool true
+}
+
+logging!overlay {
+  level debug
+  format pretty
+  outputs [stdout, /tmp/app-dev.log]
+}

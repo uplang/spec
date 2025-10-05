@@ -1,0 +1,11 @@
+# Production with beta features enabled
+
+config!base ../production.up
+
+features_to_add!include [
+  ../features/enable-beta.up
+]
+
+deployment_name production-beta
+rollout_strategy canary
+canary_percentage!int 10

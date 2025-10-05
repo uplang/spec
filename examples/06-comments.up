@@ -1,0 +1,59 @@
+# Comments example
+# This file demonstrates comment syntax in UP
+
+# Comments start with # and go to end of line
+# They can appear anywhere
+
+# Basic key-value with comment above
+name John Doe
+
+# Multiple comment lines
+# can be used to
+# provide detailed explanations
+age!int 30
+
+# Comments can document sections
+# Server configuration section
+server {
+# Host settings
+host localhost
+
+# Port settings
+port!int 8080
+
+# Enable debug mode
+debug!bool false
+}
+
+# Empty lines and comments are ignored
+# They don't affect parsing
+
+# List with comments
+items [
+# First item
+apple
+# Second item
+banana
+# Third item
+cherry
+]
+
+# Comments before multiline blocks
+description ```
+This is a multiline description.
+Note: # inside multiline blocks is NOT a comment
+# It's just part of the content
+```
+
+###############################################
+# You can use comments as section dividers
+###############################################
+
+database {
+# Primary database connection
+host db.example.com
+port!int 5432
+}
+
+# Comment at end of file
+

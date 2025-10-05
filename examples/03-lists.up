@@ -1,0 +1,51 @@
+# List structures
+# This example demonstrates multiline and inline lists
+
+# Multiline list
+fruits [
+apple
+banana
+cherry
+dragonfruit
+]
+
+# Empty list
+empty_list [
+]
+
+# List with numeric items
+ports!list [
+80
+443
+8080
+3000
+]
+
+# Inline list
+colors [red, green, blue, yellow]
+
+# Inline list with spaces
+tags [web, api, backend, microservice]
+
+# Multiple lists
+# grocery_list [
+dairy
+bread
+eggs
+]
+
+beverages [
+coffee
+tea
+water
+juice
+]
+
+# Nested lists (list of inline lists)
+coordinates [
+[0, 0]
+[1, 2]
+[3, 4]
+[5, 6]
+]
+

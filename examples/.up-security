@@ -1,0 +1,203 @@
+# SNAP Security Policy
+# Defines security requirements for namespace plugins
+# This file controls how namespaces are verified and executed
+
+version 1.0.0
+
+policy {
+  # Verification requirements
+  verify_hashes!bool true
+  verify_signatures!bool false  # Set to true in production
+
+  # For development, allow unsigned local namespaces
+  allow_unsigned_local!bool true
+
+  # Trust requirements
+  min_trust_level local  # none, local, verified, official
+
+  # Error handling
+  fail_on_hash_mismatch!bool true
+  fail_on_signature_mismatch!bool true
+  fail_on_version_mismatch!bool true
+
+  # Warnings
+  warn_on_deprecated!bool true
+  warn_on_unsigned!bool true
+
+  # Development mode (less strict)
+  dev_mode!bool true
+}
+
+# Namespace-specific policies
+namespace_policies {
+  # Built-in namespaces (always trusted)
+  builtin {
+    namespaces [time, date, id, random]
+    require_signature!bool false
+    require_hash_verification!bool false
+    trust_level official
+  }
+
+  # Safe community namespaces
+  safe {
+    namespaces [greeting, math]
+    require_signature!bool false
+    require_hash_verification!bool true
+    trust_level local
+  }
+
+  # Dangerous namespaces (require explicit approval)
+  dangerous {
+    namespaces [file, env, exec]
+    require_explicit_approval!bool true
+    require_signature!bool true
+    require_hash_verification!bool true
+    min_trust_level official
+
+    prompt_message ```
+This namespace can access system resources.
+Only allow if you trust the source.
+```
+  }
+}
+
+# Trusted signers (public keys for verification)
+trusted_signers {
+  snap_core {
+    public_key ed25519:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    name "SNAP Core Team"
+    email security@snap-lang.org
+    trust_level official
+    added_at 2025-10-05T00:00:00Z
+  }
+
+  # Add your team's signing keys here
+  # Example:
+  # my_team {
+  #   public_key ed25519:your_public_key_here
+  #   name "My Team"
+  #   email security@myteam.com
+  #   trust_level verified
+  #   added_at 2025-10-05T00:00:00Z
+  # }
+}
+
+# Audit configuration
+audit {
+  enabled!bool true
+  log_path ~/.snap/audit.log
+  log_level info  # debug, info, warn, error
+
+  # Events to log
+  log_events [
+    namespace_load
+    namespace_execute
+    hash_verification
+    signature_verification
+    security_violation
+    version_incompatibility
+  ]
+
+  # Rotation
+  max_log_size!int 10485760  # 10MB
+  keep_logs!int 10
+}
+
+# Registry configuration
+registries {
+  official {
+    url https://registry.snap-lang.org
+    enabled!bool true
+    require_https!bool true
+    verify_tls!bool true
+
+    trust_level official
+
+    # Cache settings
+    cache_enabled!bool true
+    cache_dir ~/.snap/cache/registry
+    cache_ttl!dur 24h
+  }
+
+  # Add custom registries here
+  # company_internal {
+  #   url https://snap-registry.company.internal
+  #   enabled!bool true
+  #   require_https!bool true
+  #   trust_level verified
+  # }
+}
+
+# Sandboxing configuration
+sandbox {
+  enabled!bool false  # Enable in production
+
+  # Filesystem restrictions
+  filesystem {
+    read_only!bool true
+    allowed_read_paths [
+      ./config
+      ./data
+      /tmp
+    ]
+    allowed_write_paths [
+      /tmp
+    ]
+    blocked_paths [
+      ~/.ssh
+      ~/.gnupg
+      /etc
+    ]
+  }
+
+  # Network restrictions
+  network {
+    enabled!bool false
+    allowed_hosts []
+  }
+
+  # Resource limits
+  resources {
+    max_memory!int 268435456  # 256MB
+    max_cpu_time!dur 30s
+    max_processes!int 1
+  }
+}
+
+# Development overrides
+development {
+  # Allow running unsigned local namespaces
+  skip_signature_verification!bool true
+
+  # Less strict hash checking
+  warn_on_hash_mismatch!bool true
+  fail_on_hash_mismatch!bool false
+
+  # Verbose logging
+  verbose!bool true
+
+  # Quick reload
+  disable_cache!bool true
+}
+
+metadata {
+  created_at 2025-10-05T14:30:00Z
+  created_by snap init
+
+  notes ```
+This is the default security policy for SNAP namespace plugins.
+Adjust settings based on your security requirements.
+
+For production:
+  - Set verify_signatures to true
+  - Set dev_mode to false
+  - Enable sandbox
+  - Use stricter trust levels
+
+For development:
+  - Current settings are appropriate
+  - Allows local unsigned namespaces
+  - Provides warnings without blocking
+```
+}
+

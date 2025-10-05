@@ -1,0 +1,25 @@
+# High availability configuration
+
+scaling!patch {
+  server.replicas!int 20
+  server.health_check_interval!dur 10s
+}
+
+database!overlay {
+  replicas [
+    {
+      host db-replica-1.example.com
+      port!int 5432
+    }
+    {
+      host db-replica-2.example.com
+      port!int 5432
+    }
+  ]
+}
+
+load_balancer {
+  enabled!bool true
+  algorithm round_robin
+  health_check!bool true
+}

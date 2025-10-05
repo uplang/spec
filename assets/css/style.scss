@@ -1,0 +1,248 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// Custom styles for UP documentation - Grayscale theme
+
+// Grayscale palette
+$gray-900: #1a1a1a;
+$gray-800: #2d2d2d;
+$gray-700: #404040;
+$gray-600: #595959;
+$gray-500: #737373;
+$gray-400: #999999;
+$gray-300: #d9d9d9;
+$gray-200: #e6e6e6;
+$gray-100: #f5f5f5;
+$white: #ffffff;
+
+// Semantic colors
+$text-primary: $gray-900;
+$text-secondary: $gray-600;
+$bg-primary: $white;
+$bg-secondary: $gray-100;
+$border-color: $gray-300;
+$accent: $gray-700;
+
+// Headers
+h1, h2, h3, h4, h5, h6 {
+  color: $text-primary;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+h1 {
+  border-bottom: 3px solid $gray-800;
+  padding-bottom: 0.3em;
+  font-weight: 700;
+}
+
+h2 {
+  border-bottom: 2px solid $gray-600;
+  padding-bottom: 0.3em;
+}
+
+// Links
+a {
+  color: $gray-800;
+  text-decoration: none;
+  border-bottom: 1px solid $gray-400;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: $gray-900;
+    border-bottom-color: $gray-800;
+  }
+}
+
+// Code blocks
+code {
+  background-color: $gray-100;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 0.9em;
+  color: $gray-800;
+  border: 1px solid $gray-300;
+}
+
+pre {
+  background-color: $gray-900;
+  border-radius: 4px;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid $gray-800;
+
+  code {
+    background-color: transparent;
+    color: $gray-100;
+    padding: 0;
+    border: none;
+  }
+}
+
+// Tables
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  border: 1px solid $border-color;
+
+  th {
+    background-color: $gray-800;
+    color: $white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid $gray-700;
+  }
+
+  td {
+    border: 1px solid $border-color;
+    padding: 10px;
+    color: $text-primary;
+  }
+
+  tr:nth-child(even) {
+    background-color: $gray-100;
+  }
+
+  tr:hover {
+    background-color: $gray-200;
+  }
+}
+
+// Badges
+img[alt*="badge"] {
+  display: inline-block;
+  margin: 2px;
+}
+
+// Horizontal rules
+hr {
+  border: none;
+  border-top: 2px solid $gray-300;
+  margin: 3em 0;
+}
+
+// Blockquotes
+blockquote {
+  border-left: 4px solid $gray-700;
+  padding-left: 1em;
+  margin-left: 0;
+  color: $text-secondary;
+  font-style: italic;
+  background-color: $gray-100;
+  padding: 1em;
+  border-radius: 3px;
+}
+
+// Details/Summary
+details {
+  margin: 1em 0;
+  padding: 1em;
+  background-color: $gray-100;
+  border-radius: 4px;
+  border-left: 4px solid $gray-700;
+  border: 1px solid $border-color;
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: $gray-800;
+    user-select: none;
+
+    &:hover {
+      color: $gray-900;
+    }
+  }
+
+  &[open] summary {
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.5em;
+  }
+}
+
+// Buttons/Call to action
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: $gray-800;
+  color: $white !important;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 2px solid $gray-800;
+
+  &:hover {
+    background-color: $gray-900;
+    border-color: $gray-900;
+    text-decoration: none;
+  }
+}
+
+// Feature grid
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5em;
+  margin: 2em 0;
+}
+
+// Centered content
+div[align="center"] {
+  text-align: center;
+  margin: 2em 0;
+}
+
+// Responsive images
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Navigation
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 0;
+  margin: 2em 0;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+}
+
+// Footer
+footer {
+  margin-top: 4em;
+  padding-top: 2em;
+  border-top: 2px solid $gray-300;
+  text-align: center;
+  color: $text-secondary;
+}
+
+// Body text
+body {
+  color: $text-primary;
+  line-height: 1.6;
+}
+
+// Improve readability
+p {
+  margin-bottom: 1em;
+  color: $text-primary;
+}
+
+// Clean list styling
+ul, ol {
+  margin-bottom: 1em;
+
+  li {
+    margin-bottom: 0.5em;
+  }
+}
+

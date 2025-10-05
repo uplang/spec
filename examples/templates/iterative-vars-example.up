@@ -1,0 +1,119 @@
+# Example demonstrating iterative variable resolution
+# Variables can reference other variables regardless of order
+# The engine resolves them iteratively until convergence
+
+vars {
+  # These variables reference each other in complex ways
+  # Order doesn't matter - they'll be resolved iteratively
+
+  # Base values
+  region us-west-2
+  environment production
+
+  # Build up from base values (references defined later)
+  full_env_name $vars.environment-$vars.region
+
+  # Port references env
+  base_port!int 8000
+  port_offset!int 443
+  actual_port!int $vars.port_offset
+
+  # Host builds from multiple vars
+  service_name api
+  domain_suffix example.com
+  host $vars.service_name.$vars.environment.$vars.domain_suffix
+
+  # URL builds from host and port (depends on vars defined above)
+  base_url https://$vars.host:$vars.actual_port
+
+  # Health check uses base_url
+  health_endpoint $vars.base_url/health
+  metrics_endpoint $vars.base_url/metrics
+
+  # Database config builds from environment
+  db_prefix myapp
+  db_name $vars.db_prefix-$vars.environment
+  db_host $vars.db_name.internal.$vars.domain_suffix
+
+  # Connection string uses multiple vars
+  db_connection postgres://$vars.db_host:5432/$vars.db_name
+
+  # Cache config
+  cache_prefix cache
+  cache_host $vars.cache_prefix.$vars.environment.internal
+
+  # Deeply nested reference (variable references another variable that references another)
+  deployment_id $vars.full_env_name-v1
+  deployment_tag $vars.service_name-$vars.deployment_id
+}
+
+# Use the variables throughout the config
+# All will be resolved correctly regardless of reference depth
+
+service {
+  name $vars.service_name
+  environment $vars.environment
+  region $vars.region
+  deployment_tag $vars.deployment_tag
+}
+
+server {
+  host $vars.host
+  port $vars.actual_port
+  base_url $vars.base_url
+}
+
+endpoints {
+  health $vars.health_endpoint
+  metrics $vars.metrics_endpoint
+}
+
+database {
+  name $vars.db_name
+  host $vars.db_host
+  connection_string $vars.db_connection
+}
+
+cache {
+  host $vars.cache_host
+  port!int 6379
+}
+
+# ---
+
+# Example with overlay - variables can be redefined and re-resolved
+
+vars {
+  environment staging
+  # When we change environment, all dependent vars are automatically re-resolved:
+  # - full_env_name becomes "staging-us-west-2"
+  # - host becomes "api.staging.example.com"
+  # - db_name becomes "myapp-staging"
+  # - etc.
+}
+
+server!overlay {
+  port!int 8443
+}
+
+# ---
+
+# Example showing that overlays don't need to be ordered
+# This overlay appears before any base, but it still works
+
+server!overlay {
+  replicas!int 5
+  auto_scale!bool true
+}
+
+vars {
+  # Add more variables that build on existing ones
+  max_replicas!int 10
+  scale_target replica_count=$vars.max_replicas
+}
+
+scaling {
+  target $vars.scale_target
+  current $vars.server.replicas  # Can even reference config values (if implemented)
+}
+

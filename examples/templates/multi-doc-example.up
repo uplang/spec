@@ -1,0 +1,178 @@
+# Base configuration - shared defaults
+# This serves as the foundation for all environments
+
+vars {
+  app_name MyApp
+  default_port!int 8080
+  default_replicas!int 2
+}
+
+app_name $vars.app_name
+version 1.0.0
+
+server {
+  host 0.0.0.0
+  port $vars.default_port
+  replicas $vars.default_replicas
+  timeout!dur 30s
+}
+
+database {
+  driver postgres
+  pool_size!int 20
+  timeout!dur 5s
+}
+
+features {
+  new_ui!bool false
+  beta_api!bool false
+  metrics!bool true
+}
+
+# ---
+
+# Development environment
+# Inherits from base, adds dev-specific overrides
+
+vars {
+  dev_host localhost
+  dev_db local-postgres
+}
+
+server!overlay {
+  host $vars.dev_host
+  debug!bool true
+  replicas!int 1
+  hot_reload!bool true
+}
+
+database!overlay {
+  host $vars.dev_db
+  pool_size!int 5
+}
+
+features!overlay {
+  new_ui!bool true
+  beta_api!bool true
+  debug_panel!bool true
+}
+
+# ---
+
+# Staging environment
+# Closer to production but with reduced resources
+
+vars {
+  staging_host staging.example.com
+  staging_db staging-db.internal
+}
+
+server!overlay {
+  host $vars.staging_host
+  replicas!int 3
+  tls_enabled!bool true
+}
+
+database!overlay {
+  host $vars.staging_db
+  pool_size!int 50
+  ssl_enabled!bool true
+}
+
+features!overlay {
+  new_ui!bool true
+  beta_api!bool true
+}
+
+# ---
+
+# Production environment
+# Full production configuration with all safeguards
+
+vars {
+  prod_host production.example.com
+  prod_db prod-db-cluster.internal
+  prod_cache cache.internal
+}
+
+server!overlay {
+  host $vars.prod_host
+  replicas!int 10
+  tls_enabled!bool true
+  rate_limit!int 1000
+}
+
+database!overlay {
+  host $vars.prod_db
+  pool_size!int 100
+  ssl_enabled!bool true
+  backup_enabled!bool true
+}
+
+cache {
+  host $vars.prod_cache
+  ttl!dur 1h
+  max_size 10GB
+}
+
+features!overlay {
+  new_ui!bool true
+  analytics!bool true
+  monitoring!bool true
+}
+
+monitoring {
+  enabled!bool true
+  scrape_interval!dur 15s
+  retention!dur 30d
+}
+
+# ---
+
+# Production with Beta Features
+# Extends production with experimental features
+
+config!base production.up
+
+features!overlay {
+  beta_api!bool true
+  ai_suggestions!bool true
+  experimental_cache!bool true
+}
+
+server!patch {
+  beta_endpoints!bool true
+  feature_flags!bool true
+}
+
+# ---
+
+# Production High Availability
+# Production with HA features enabled
+
+config!base production.up
+
+server!overlay {
+  replicas!int 20
+  auto_scaling!bool true
+  health_check_interval!dur 5s
+}
+
+database!overlay {
+  pool_size!int 200
+  read_replicas!int 3
+  failover_enabled!bool true
+}
+
+cache {
+  redundancy!int 3
+  cluster_mode!bool true
+}
+
+backup {
+  enabled!bool true
+  interval!dur 1h
+  retention!dur 90d
+  cross_region!bool true
+}
+

@@ -1,0 +1,25 @@
+# Enhanced logging with multiple outputs
+
+merge_options!merge {
+  list_strategy append
+}
+
+logging!overlay {
+  level trace
+  structured!bool true
+  outputs [
+    /var/log/app/debug.log
+    /var/log/app/access.log
+  ]
+
+  integrations {
+    datadog {
+      enabled!bool true
+      api_key datadog_key_here
+    }
+    elasticsearch {
+      enabled!bool true
+      url https://logs.example.com
+    }
+  }
+}

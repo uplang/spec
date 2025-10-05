@@ -1,0 +1,170 @@
+# Complex mixed example
+# This demonstrates a realistic configuration with all features
+
+# Application metadata
+app_name MyApplication
+app_version 2.1.0
+environment production
+debug!bool false
+
+# Server configuration
+server {
+host 0.0.0.0
+port!int 8080
+tls_enabled!bool true
+cert_path /etc/ssl/certs/server.crt
+key_path /etc/ssl/private/server.key
+}
+
+# Database configuration with replica
+database {
+driver postgres
+primary {
+host db1.example.com
+port!int 5432
+database myapp_db
+username dbuser
+max_connections!int 50
+}
+replicas [
+{
+host db2.example.com
+port!int 5432
+}
+{
+host db3.example.com
+port!int 5432
+}
+]
+}
+
+# Cache configuration
+cache {
+type redis
+host redis.example.com
+port!int 6379
+ttl!dur 3600s
+max_memory!int 512
+}
+
+# API keys and secrets (would be encrypted in real use)
+api_keys [
+sk_live_abc123
+sk_live_xyz789
+]
+
+# Feature flags
+features {
+new_dashboard!bool true
+beta_api!bool false
+experimental_search!bool true
+}
+
+# Logging configuration with multiline format
+logging {
+level info
+format ```
+{
+  "timestamp": "${timestamp}",
+  "level": "${level}",
+  "message": "${message}",
+  "context": ${context}
+}
+```
+outputs [
+stdout
+/var/log/app/application.log
+]
+}
+
+# Service endpoints
+endpoints [
+{
+name health
+path /health
+method GET
+}
+{
+name api_v1
+path /api/v1
+method ANY
+}
+]
+
+# Cron jobs
+scheduled_jobs!table {
+columns [name, schedule, command, enabled]
+rows {
+[cleanup, 0 2 * * *, /usr/local/bin/cleanup.sh, true]
+[backup, 0 3 * * *, /usr/local/bin/backup.sh, true]
+[report, 0 8 * * 1, /usr/local/bin/weekly-report.sh, true]
+[maintenance, 0 4 * * 0, /usr/local/bin/maintenance.sh, false]
+}
+}
+
+# Email templates
+email_templates {
+welcome {
+subject Welcome to MyApplication!
+body!4 ```html
+    <html>
+      <body>
+        <h1>Welcome!</h1>
+        <p>Thank you for joining MyApplication.</p>
+      </body>
+    </html>
+```
+}
+password_reset {
+subject Reset your password
+body!4 ```text
+    Hello,
+
+    Click the link below to reset your password:
+    ${reset_link}
+
+    This link expires in 24 hours.
+```
+}
+}
+
+# Notification settings
+notifications {
+email!bool true
+sms!bool false
+push!bool true
+channels [email, slack, webhook]
+slack_webhook!url https://hooks.slack.com/services/T00/B00/XXXX
+}
+
+# Metrics and monitoring
+monitoring {
+enabled!bool true
+provider datadog
+api_key dd_api_key_here
+metrics_port!int 9090
+tags [env:production, app:myapp, team:platform]
+}
+
+# Security settings
+security {
+cors_enabled!bool true
+allowed_origins [
+https://app.example.com
+https://admin.example.com
+]
+rate_limiting {
+enabled!bool true
+requests_per_minute!int 60
+burst!int 100
+}
+}
+
+# Build information
+build {
+commit_sha abc123def456
+build_date!ts 2025-10-05T10:00:00Z
+builder jenkins
+pipeline_id!int 12345
+}
+

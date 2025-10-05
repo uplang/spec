@@ -1,0 +1,59 @@
+# Table structures
+# This example demonstrates table syntax (columns + rows)
+
+# Simple table
+users!table {
+columns [id, name, email, age]
+rows {
+[1, Alice, alice@example.com, 30]
+[2, Bob, bob@example.com, 25]
+[3, Carol, carol@example.com, 35]
+[4, Dave, dave@example.com, 28]
+}
+}
+
+# Product catalog table
+products!table {
+columns [sku, name, price, stock]
+rows {
+[A001, Widget, 9.99, 100]
+[A002, Gadget, 19.99, 50]
+[A003, Doohickey, 14.99, 75]
+[A004, Thingamajig, 24.99, 25]
+}
+}
+
+# Employee table with more columns
+employees!table {
+columns [emp_id, first_name, last_name, department, salary, hire_date]
+rows {
+[1001, John, Doe, Engineering, 95000, 2020-01-15]
+[1002, Jane, Smith, Sales, 85000, 2019-03-22]
+[1003, Bob, Johnson, Marketing, 75000, 2021-06-10]
+[1004, Alice, Williams, Engineering, 105000, 2018-11-05]
+[1005, Charlie, Brown, HR, 70000, 2022-02-01]
+}
+}
+
+# Server configuration table
+servers!table {
+columns [hostname, ip_address, role, status]
+rows {
+[web01, 192.168.1.10, webserver, active]
+[web02, 192.168.1.11, webserver, active]
+[db01, 192.168.1.20, database, active]
+[cache01, 192.168.1.30, cache, maintenance]
+}
+}
+
+# Test results table
+test_results!table {
+columns [test_name, status, duration_ms, timestamp]
+rows {
+[test_login, passed, 125, 2025-10-05T10:00:00Z]
+[test_signup, passed, 230, 2025-10-05T10:01:00Z]
+[test_checkout, failed, 450, 2025-10-05T10:02:00Z]
+[test_search, passed, 89, 2025-10-05T10:03:00Z]
+}
+}
+

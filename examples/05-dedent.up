@@ -1,0 +1,64 @@
+# Dedenting multiline content
+# This example demonstrates the dedent feature (removing leading spaces)
+
+# Without dedent - indentation preserved
+code_with_indent ```python
+    def hello():
+        print("indented")
+        return True
+```
+
+# With dedent - removes 4 spaces from each line
+code_dedented!4 ```python
+    def hello():
+        print("not indented anymore")
+        return True
+```
+
+# Dedent 2 spaces
+yaml_config!2 ```yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: my-service
+  spec:
+    selector:
+      app: my-app
+    ports:
+    - port: 80
+```
+
+# Dedent 8 spaces
+deeply_indented!8 ```text
+        This text was indented by 8 spaces
+        Every line gets 8 spaces removed
+        Making it easier to embed code
+        That comes from indented sources
+```
+
+# Dedent for SQL
+formatted_query!4 ```sql
+    SELECT
+        user_id,
+        COUNT(*) as total
+    FROM
+        orders
+    WHERE
+        status = 'completed'
+    GROUP BY
+        user_id
+    HAVING
+        COUNT(*) > 5
+```
+
+# Dedent for configuration
+config_snippet!6 ```toml
+      [server]
+      host = "localhost"
+      port = 8080
+
+      [database]
+      url = "postgresql://localhost/mydb"
+      pool_size = 10
+```
+

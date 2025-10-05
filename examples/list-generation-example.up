@@ -1,0 +1,114 @@
+# Example: List Generation with $list namespace
+# Demonstrates declarative list generation and $self context
+
+!use [list, faker, id, random, time]
+
+# Example 1: Simple sequential generation
+simple_ids $list.generate(5, $self.number)
+# Result: [1, 2, 3, 4, 5]
+
+# Example 2: Generate test users
+test_users $list.generate(3, {
+  id $id.uuid
+  sequence!int $self.number
+  name $faker.name
+  email $faker.email
+  created_at $time.add(-$self.index * 24h)
+  is_first!bool $self.first
+  is_last!bool $self.last
+})
+
+# Example 3: Generate API test cases
+api_tests $list.generate(10, {
+  test_id "test_$self.number"
+  endpoint "/api/users/$self.number"
+  method GET
+  expected_status!int 200
+  sequence $self.number
+  total $self.count
+})
+
+# Example 4: Generate configuration for multiple environments
+environments $list.generate(3, {
+  name $list.map([dev, staging, prod], $self.item)[$self.index]
+  sequence $self.number
+
+  server {
+    host "$list.map([dev, staging, prod], $self.item)[$self.parent.index].example.com"
+    port!int $math.add(8000, $self.parent.number)
+    replicas!int $math.mul($self.parent.number, 2)
+  }
+
+  database {
+    name "myapp_$list.map([dev, staging, prod], $self.item)[$self.parent.index]"
+    pool_size!int $math.mul($self.parent.number, 10)
+  }
+})
+
+# Example 5: Generate mock product catalog
+products $list.generate(20, {
+  product_id "PROD-$self.number"
+  sku $random.string(8)
+  name "$faker.buzzword Product $self.number"
+  description $faker.paragraph
+  price!float $random.float(9.99, 999.99)
+  in_stock!bool $random.bool
+
+  # Conditional fields based on position
+  featured!bool $self.number <= 5
+  discount!float $self.first ? 0.3 : $self.number <= 10 ? 0.15 : 0.0
+
+  metadata {
+    sequence $self.number
+    total_products $self.count
+    position_label "Product $self.number of $self.count"
+  }
+})
+
+# Example 6: Generate time series data
+hourly_metrics $list.generate(24, {
+  hour $self.index
+  timestamp $time.add($math.mul($self.index, 1h))
+
+  metrics {
+    requests!int $random.int(100, 10000)
+    errors!int $random.int(0, 100)
+    latency_ms!int $random.int(50, 500)
+  }
+})
+
+# Example 7: Generate nested lists (matrix)
+matrix_3x3 $list.generate(3, {
+  row $self.number
+  cells $list.generate(3, {
+    col $self.number
+    value $math.mul($self.parent.row, 10) + $self.col
+  })
+})
+
+# Example 8: Using range
+numbers $list.range(1, 10)
+# Result: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+evens $list.range(0, 20, 2)
+# Result: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+
+# Example 9: Map transformation
+vars {
+  user_ids [101, 102, 103, 104, 105]
+}
+
+user_labels $list.map($vars.user_ids, "User #$self.item")
+# Result: ["User #101", "User #102", ...]
+
+# Example 10: Repeat pattern
+default_servers $list.repeat({
+  host "0.0.0.0"
+  port!int 8080
+  enabled!bool true
+}, 5)
+
+# Note: This example demonstrates the design of the $list namespace
+# Implementation requires template evaluation engine
+# See BUILTIN-NAMESPACES.md for complete documentation
+

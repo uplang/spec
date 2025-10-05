@@ -1,0 +1,19 @@
+# Production with high availability and enhanced logging
+
+config!base ../production.up
+
+additional_features!include [
+  ../features/high-availability.up
+  ../features/enhanced-logging.up
+]
+
+deployment_name production-ha
+maintenance_window 02:00-04:00 UTC
+backup_enabled!bool true
+
+disaster_recovery {
+  enabled!bool true
+  region us-west-2
+  rpo!dur 15m
+  rto!dur 1h
+}

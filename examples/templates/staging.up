@@ -1,0 +1,34 @@
+# Staging environment configuration
+
+config!base production.up
+
+environment!overlay staging
+
+server!overlay {
+  host staging.example.com
+  replicas!int 3
+  debug!bool true
+}
+
+database!overlay {
+  host db.staging.example.com
+  database myapp_staging
+  username staging_user
+  pool_size!int 50
+}
+
+cache!overlay {
+  host redis.staging.example.com
+}
+
+features!overlay {
+  beta_api!bool true
+}
+
+logging!overlay {
+  level debug
+  outputs [
+    stdout
+    /var/log/app/staging.log
+  ]
+}

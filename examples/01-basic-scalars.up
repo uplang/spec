@@ -1,0 +1,36 @@
+# Basic scalar values
+# This example demonstrates simple key-value pairs with type annotations
+
+# String values (default type)
+name John Doe
+email john.doe@example.com
+description A simple string value
+
+# Integer types
+age!int 30
+count!integer 42
+port!int 8080
+
+# Boolean types
+active!bool true
+debug!boolean false
+enabled!bool yes
+
+# URL types
+homepage!url https://example.com
+api_endpoint!uri https://api.example.com/v1
+
+# Timestamp types
+created_at!ts 2025-10-05T12:00:00Z
+updated_at!timestamp 2025-10-05T14:30:00Z
+
+# Duration types
+timeout!dur 30s
+interval!duration 5m
+ttl!dur 1h
+
+# Custom types
+user_id!uuid 123e4567-e89b-12d3-a456-426614174000
+color!hex #FF5733
+temperature!celsius 22.5
+

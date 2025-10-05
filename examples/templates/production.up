@@ -1,0 +1,74 @@
+# Production environment configuration
+
+config!base base.up
+
+vars {
+  prod_host production.example.com
+  db_host db.production.example.com
+  cache_host redis.production.example.com
+}
+
+environment!overlay production
+
+server!overlay {
+  host $vars.prod_host
+  port!int 443
+  replicas!int 10
+  timeout!dur 60s
+  tls_enabled!bool true
+  tls_cert_path /etc/ssl/certs/app.crt
+  tls_key_path /etc/ssl/private/app.key
+}
+
+database!overlay {
+  host $vars.db_host
+  port!int 5432
+  database myapp_prod
+  username prod_user
+  pool_size!int 100
+  timeout!dur 10s
+  ssl_enabled!bool true
+}
+
+cache!overlay {
+  enabled!bool true
+  driver redis
+  host $vars.cache_host
+  port!int 6379
+  ttl!dur 7200s
+  max_memory!int 2048
+}
+
+features!overlay {
+  new_ui!bool true
+  beta_api!bool false
+  analytics!bool true
+}
+
+logging!overlay {
+  level warn
+  format json
+  outputs [
+    stdout
+    /var/log/app/application.log
+    /var/log/app/error.log
+  ]
+}
+
+monitoring {
+  enabled!bool true
+  metrics_port!int 9090
+  health_check_interval!dur 30s
+}
+
+security {
+  cors_enabled!bool true
+  allowed_origins [
+    https://app.example.com
+    https://admin.example.com
+  ]
+  rate_limiting {
+    enabled!bool true
+    requests_per_minute!int 1000
+  }
+}
