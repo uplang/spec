@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "snap.tab.h"
+#include "up.tab.h"
 
 int line_num = 1;
 int column_num = 1;

@@ -1,8 +1,17 @@
 # UP
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Website](https://img.shields.io/badge/Website-uplang.org-blue)](https://uplang.org)
+
 **Unified Properties**
 
 UP is a modern, human-friendly data serialization format designed to be simpler than YAML, more powerful than JSON, and more readable than TOML. It combines the best features of existing formats while introducing unique capabilities like dedenting and type annotations.
+
+**Quick Links:**
+- 📖 [Syntax Reference](SYNTAX-REFERENCE.md)
+- 🔧 [Implementations](IMPLEMENTATIONS.md)
+- 📚 [Grammar Specification](grammar/)
+- 🌐 [Website](https://uplang.org)
 
 ## Why UP?
 
